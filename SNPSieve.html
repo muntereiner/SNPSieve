@@ -1,0 +1,70 @@
+<!DOCTYPE  html>
+<html>
+
+<head>
+<meta charset="UTF-8">
+<title>SNP Sieve</title>
+</head>
+
+<body>
+
+<form>
+<input id="VCFUpload" type="file">
+</form>
+
+<p>
+<select id="geneName"></select>, <input type="text" size="5" id="chrNum" style="border:1px solid #000000" readonly>: <input type="button" id="revertLeft" value="<|"> <input type="text" size="10" id="start" style="border:1px solid #000000" readonly> -  <input type="text" size="10" id="end" style="border:1px solid #000000" readonly> <input type="button" id="revertRight" value="|>">
+<br>
+<iframe id="ucsc" width=660 height=350 style="border:1px solid #000000" scrolling="no"></iframe>
+<canvas id="mainTrack" width=660 height=150 style="border:1px solid #000000; float:left"></canvas>
+<canvas id="nucPanel" width=20 height=150 style="border:1px solid #000000; float:left"></canvas>
+<input type="text" id="filterRatio" style="float:right; border:1px solid #000000" size="28" readonly>
+<input type="button" id="resetFilters" value="Reset" style="float:right">
+<form style="float:right">
+Coverage :
+<div id="covDiv" style="float:right; border:1px solid #000000;">
+<input id="covRangeLower" type="range" min="0" value="0"> 
+<input id="covTextLower" type="text" size="5" min="0" value="0">
+<br>
+<input id="covRangeUpper" type="range" min="0" value="0"> 
+<input id="covTextUpper" type="text" size="5" min="0" value="0">
+</div>
+<br><br><br>
+Frequency :
+<div id="freqDiv" style="float:right; border:1px solid #000000;">
+<input id="freqRangeLower" type="range" min="0" max="100" value="0"> 
+<input id="freqTextLower" type="text" size="5" min="0" max="100" value="0">
+<br>
+<input id="freqRangeUpper" type="range" min="0" max="100" value="0"> 
+<input id="freqTextUpper" type="text" size="5" min="0" max="100" value="0">
+</div>
+<br><br><br>
+Quality :
+<div id="qualDiv" style="float:right; border:1px solid #000000;">
+<input id="qualRangeLower" type="range" min="0" value="0"> 
+<input id="qualTextLower" type="text" size="5" min="0" value="0">
+<br>
+<input id="qualRangeUpper" type="range" min="0" value="0"> 
+<input id="qualTextUpper" type="text" size="5" min="0" value="0">
+</div>
+<br><br><br>
+Strand Bias :
+<div id="biasDiv" style="float:right; border:1px solid #000000;">
+<input id="biasRangeLower" type="range" min="0" max="1" step="0.05" value="0"> 
+<input id="biasTextLower" type="text" size="5" min="0" max="1" value="0">
+<br>
+<input id="biasRangeUpper" type="range" min="0" max="1" step="0.05" value="0"> 
+<input id="biasTextUpper" type="text" size="5" min="0" max="1" value="0">
+</div>
+</form>
+<br><br>
+<canvas id="cadd" width=660 height=25 style="border:1px solid #000000;"></canvas>
+<br>
+<canvas id="polyphen" width=660 height=25 style="border:1px solid #000000;"></canvas>
+</p>
+
+<script src="sourceCode.js"></script>
+
+</body>
+
+</html>

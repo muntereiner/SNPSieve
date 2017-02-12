@@ -1,2 +1,8 @@
 # SNPSieve
 SNP Sieve is a visualization tool for quickly sorting through single nucleotide polymorphisms from raw VCF files from NGS.
+
+With the advent of Next Generation Sequencing, cancer researchers are becoming overloaded with terabytes of genomic data. Filtering through the many thousands of single nucleotide polymorphisms that can be present in a single cancer sample is extremely time consuming. SNP Sieve hopes to streamline the process by connecting directly to the sequencer. Researchers can upload their raw VCF files and explore their SNPs instantly. The SNPSieve javascript applet runs in your browser, so you don't actually need to send your data to a server for processing. All the magic happens on locally!
+
+Take a look at the example text file, which includes SNPs from an endometrial cancer specimen, for information about formatting. If you want to play around with the functionality of SNPSieve but don't have your own data to explore at the moment, we provide this text file for your convenience.
+
+SNP Sieve pulls information from the UCSC Genome Browser and links it with scorings from two of the best prediction algorithms for the deleteriousness of a SNP: PolyPhen and CADD. SNPs are color coded in terms of the reference nucleotide and the variant nucleotide to give instant context for the possible mechanisms of genomic disruption in any given region of a gene. Filters on the right side allow for thresholds to be set for the coverage, frequency, quality, and strand bias reported by the sequencer for each SNP. These tools can be used to filter out noise, differentiate germline and somatic mutations, and narrow your results to only the most important SNPs for cancer progression.

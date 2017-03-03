@@ -14,11 +14,14 @@ var qualThreshold = [0, 0];
 var displayQuality = false;
 var biasThreshold = [0, 0];
 var displayBias = false;
+var geneEndPoints = [];
+var geneChrs = [];
 
 function readVCF(evt) {
 	var file = evt.target.files[0];
 	var reader = new FileReader();
 	reader.onload = function() {
+		variantList = [];
 		var lines = reader.result.split(/[\r\n]+/g);
 		for (i = 1; i < lines.length; i ++) {
 			var pieces = lines[i].split('\t');
@@ -89,11 +92,34 @@ function readVCF(evt) {
 			var option = document.createElement("option");
 			option.text = geneNames[i];
 			s.add(option);
+			geneEndPoints.push([10000000000, 0]);
 		}
 		s.options[0].selected;
 
+		for (i = 0; i < variantList.length; i++) {
+			var geneNum = geneNames.indexOf(variantList[i].geneID);
+			if (variantList[i].pos < geneEndPoints[geneNum][0]) {
+				geneEndPoints[geneNum][0] = variantList[i].pos;
+			}
+			if (variantList[i].pos > geneEndPoints[geneNum][1]) {
+				geneEndPoints[geneNum][1] = variantList[i].pos;
+			}
+			geneChrs[geneNum] = variantList[i].chr;
+		}
+		for (i = 0; i < geneEndPoints.length; i ++) {
+			geneEndPoints[i][0] -= 1000;
+			geneEndPoints[i][1] += 1000;
+		}
+
 		document.getElementById('ucsc').style.visibility = "hidden";
-		document.getElementById('ucsc').src="https://genome.ucsc.edu/cgi-bin/hgTracks?db=hg38&position=" + geneNames[geneMode];
+		document.getElementById('ucsc').src="https://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg38&position=chr" + geneChrs[0] + ":" + geneEndPoints[0][0] + "-" + geneEndPoints[0][1];
+		document.getElementById('chrNum').value = "chr" + geneChrs[0];
+		document.getElementById('start').value = geneEndPoints[0][0];
+		document.getElementById('end').value = geneEndPoints[0][1];
+		windowSize[0] = geneEndPoints[0][0];
+		windowSize[1] = geneEndPoints[0][1];
+		zoomSize[0] = geneEndPoints[0][0];
+		zoomSize[1] = geneEndPoints[0][1];
 	};
 	reader.readAsText(file);
 }
@@ -284,12 +310,11 @@ function mouseReleased(evt) {
 	dragOn = false;
 	var mouseX = zoomSize[0] + Math.round((evt.clientX / 660) * (zoomSize[1] - zoomSize[0]));
 	zoomSize[dragSide] = mouseX;
-	document.getElementById('ucsc').style.visibility = "hidden";
-	n = false;
 	document.getElementById('start').value = zoomSize[0];
 	document.getElementById('end').value = zoomSize[1];
 	var c = document.getElementById('chrNum').value;
-	document.getElementById('ucsc').src="https://genome.ucsc.edu/cgi-bin/hgTracks?db=hg38&position=" + c + ":" + zoomSize[0] + "-" + zoomSize[1];
+	document.getElementById('ucsc').style.visibility = "hidden";
+	document.getElementById('ucsc').src="https://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg38&position=" + c + ":" + zoomSize[0] + "-" + zoomSize[1];
 
 }
 
@@ -398,27 +423,31 @@ function changeGene(evt) {
 
 	geneMode = geneNames.indexOf(evt.target.value);
 	document.getElementById('ucsc').style.visibility = "hidden";
-	document.getElementById('ucsc').src="https://genome.ucsc.edu/cgi-bin/hgTracks?db=hg38&position=" + geneNames[geneMode];
-
+	document.getElementById('ucsc').src="https://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg38&position=chr" + geneChrs[geneMode] + ":" + geneEndPoints[geneMode][0] + "-" + geneEndPoints[geneMode][1];
+	document.getElementById('chrNum').value = "chr" + geneChrs[geneMode];
+	document.getElementById('start').value = geneEndPoints[geneMode][0];
+	document.getElementById('end').value = geneEndPoints[geneMode][1];
+	windowSize[0] = geneEndPoints[geneMode][0];
+	windowSize[1] = geneEndPoints[geneMode][1];
+	zoomSize[0] = geneEndPoints[geneMode][0];
+	zoomSize[1] = geneEndPoints[geneMode][1];
 }
 
 function revertWindowStart(evt) {
 	zoomSize[0] = windowSize[0];
 	document.getElementById('ucsc').style.visibility = "hidden";
-	n = false;
 	document.getElementById('start').value = zoomSize[0];
 	var c = document.getElementById('chrNum').value;
-	document.getElementById('ucsc').src="https://genome.ucsc.edu/cgi-bin/hgTracks?db=hg38&position=" + c + ":" + zoomSize[0] + "-" + zoomSize[1];
+	document.getElementById('ucsc').src="https://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg38&position=" + c + ":" + zoomSize[0] + "-" + zoomSize[1];
 
 }
 
 function revertWindowEnd(evt) {
 	zoomSize[1] = windowSize[1];
 	document.getElementById('ucsc').style.visibility = "hidden";
-	n = false;
 	document.getElementById('end').value = zoomSize[1];
 	var c = document.getElementById('chrNum').value;
-	document.getElementById('ucsc').src="https://genome.ucsc.edu/cgi-bin/hgTracks?db=hg38&position=" + c + ":" + zoomSize[0] + "-" + zoomSize[1];
+	document.getElementById('ucsc').src="https://genome.ucsc.edu/cgi-bin/hgTracks?org=human&db=hg38&position=" + c + ":" + zoomSize[0] + "-" + zoomSize[1];
 
 }
 
@@ -450,37 +479,14 @@ function reset(evt) {
 	draw();
 }
 
-
 document.getElementById('VCFUpload').addEventListener('change', readVCF, false);
 document.getElementById('geneName').addEventListener('change', changeGene, false);
 
 var doc = document.getElementById('ucsc');
-var n = true;
 doc.onload = function() {
-	if (n) {
-		var url = doc.contentWindow.document.getElementsByTagName('a')[0].getAttribute("href");
-		var a = url.indexOf("=");
-		var b = url.indexOf(":");
-		var c = url.indexOf("-");
-		var d = url.indexOf("&");
-		windowSize[0] = parseInt(url.substring(b + 1, c));
-		windowSize[1] = parseInt(url.substring(c + 1, d));
-		zoomSize[0] = windowSize[0];
-		zoomSize[1] = windowSize[1];
-		document.getElementById("chrNum").value = url.substring(a + 1, b);
-		document.getElementById("start").value = windowSize[0];
-		document.getElementById("end").value = windowSize[1];
-		doc.contentWindow.document.getElementsByTagName('a')[0].click();
-		n = false;
-	}
-	else {
-		doc.contentWindow.scrollBy(120, 220);
 		doc.style.visibility = "visible";
 		draw();
-		n = true;
-	}
 }
-
 
 document.getElementById('mainTrack').addEventListener('mousedown', mousePressed, false);
 document.getElementById('mainTrack').addEventListener('mousemove', mouseDragged, false);

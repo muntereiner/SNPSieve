@@ -4,9 +4,34 @@
 <head>
 <meta charset="UTF-8">
 <title>SNP Sieve</title>
+<style>
+#myDiv
+{
+	width: 660px;
+	height: 350px;
+	overflow: hidden;
+	position: relative;
+	border:1px solid #000000;
+}
+
+#ucsc 
+{
+	position: absolute;
+	top: -165px;
+	left: -230px;
+	width: 1000px;
+	height: 1000px;
+}
+</style>
 </head>
 
 <body>
+
+<p>
+You are currently looking at a group of SNPs found in the transformed squamous cells of an endometrial carcinoma. If you would like to examine your own VCF, simply attach it below:
+</p>
+
+<div>
 
 <form>
 <input id="VCFUpload" type="file">
@@ -15,7 +40,9 @@
 <p>
 <select id="geneName"></select>, <input type="text" size="5" id="chrNum" style="border:1px solid #000000" readonly>: <input type="button" id="revertLeft" value="<|"> <input type="text" size="10" id="start" style="border:1px solid #000000" readonly> -  <input type="text" size="10" id="end" style="border:1px solid #000000" readonly> <input type="button" id="revertRight" value="|>">
 <br>
-<iframe id="ucsc" width=660 height=350 style="border:1px solid #000000" scrolling="no"></iframe>
+<div id="myDiv">
+<iframe id="ucsc" scrolling="no" style="pointer-events:none"></iframe>
+</div>
 <canvas id="mainTrack" width=660 height=150 style="border:1px solid #000000; float:left"></canvas>
 <canvas id="nucPanel" width=20 height=150 style="border:1px solid #000000; float:left"></canvas>
 <input type="text" id="filterRatio" style="float:right; border:1px solid #000000" size="28" readonly>
@@ -63,7 +90,10 @@ Strand Bias :
 <canvas id="polyphen" width=660 height=25 style="border:1px solid #000000;"></canvas>
 </p>
 
+</div>
+
 <script src="sourceCode.js"></script>
+<script src="input.js"></script>
 
 </body>
 
